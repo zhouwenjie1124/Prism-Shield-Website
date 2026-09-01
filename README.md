@@ -21,10 +21,41 @@ Settings → Pages → Source: **Deploy from a branch**, branch `main`, folder
 ## Preview locally
 
 ```bash
-python3 -m http.server 8000
+python3 serve.py
 ```
 
-Then open <http://localhost:8000>.
+Opens <http://localhost:8000> and **reloads the browser automatically** every
+time a file in this directory changes, so the edit loop is: save in your
+editor, look at the browser. Standard library only, nothing to install.
+`python3 serve.py 8080` picks another port, `--no-open` skips launching a
+browser. The reload script is injected at serve time and is never part of
+`index.html`, so it cannot leak into what GitHub Pages publishes.
+
+## Where the content lives
+
+`index.html` is the whole site. Each section starts with a banner comment, so
+`grep -n "=====" index.html` prints a table of contents:
+
+| Section | What you edit there |
+|---|---|
+| `HERO` | title, authors, affiliation, the four buttons |
+| `TEASER` | the top video and its caption |
+| `ABSTRACT` | the abstract paragraphs |
+| `HEADLINE NUMBERS` | the four stat cards (`stat-num` = the big figure, `stat-lbl` = the caption) |
+| `WHY EXACT DISTANCE` | the motivating argument, two columns |
+| `METHOD` | the three method columns |
+| `CONSERVATISM` | the accuracy figure and table |
+| `RESULTS CAROUSEL` | one `<div class="item">` per slide: an `<img>` plus an `<h2 class="subtitle">` caption |
+| `REAL TIME` | the latency figure and the speed-up table |
+| `ODOMETRY FAULT` | the fault video, figure and text |
+| `SAMPLED DATA` | the control-margin figure and table |
+| `BIBTEX` | the citation block |
+
+The layout classes come from [Bulma](https://bulma.io/documentation/). The two
+that carry most of the structure: `columns` + `column` splits a row (equal
+width by default, or `is-half` / `is-four-fifths` to force one), and
+`section hero is-light` gives a block the grey background that alternates down
+the page.
 
 ## Still to fill in
 

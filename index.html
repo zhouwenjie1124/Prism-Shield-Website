@@ -99,6 +99,18 @@
     .ascii     { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85rem;
                  line-height: 1.35; background: #f6f8fa; padding: 1rem; border-radius: 8px; overflow-x: auto; }
     table.tight td, table.tight th { padding: .4em .75em; }
+    .video-grid { display: grid; gap: 1.1rem; margin-top: 1.5rem; }
+    .video-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .video-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 768px) {
+      .video-grid.cols-3, .video-grid.cols-2 { grid-template-columns: 1fr; }
+    }
+    .video-grid video { width: 100%; border-radius: 8px; display: block; background: #000; }
+    .video-cap { font-size: .93rem; text-align: center; margin-top: .55rem; color: #4a4a4a; }
+    .video-cap b { display: block; font-size: 1rem; margin-bottom: .1rem; }
+    .is-ours { color: #2563eb; }
+    .is-base { color: #b03a2e; }
+    .refs { font-size: .82rem; color: #666; margin-top: 1.5rem; line-height: 1.5; }
   </style>
 
   <!-- Structured Data -->
@@ -200,25 +212,19 @@
   </section>
 
   <!-- ===================== TEASER ===================== -->
-  <!-- TODO: this is an animated trace, not robot footage. Record an on-board /
-       RViz clip of the Go2W clearing a narrow gap and drop it in as
-       static/videos/overview.mp4 - it is the single highest-value addition to
-       this page. Keep this trace below it as a second panel. -->
   <section class="hero teaser" id="video">
     <div class="container is-max-desktop">
       <div class="hero-body">
-        <video poster="static/images/overview_poster.jpg" id="teaser"
+        <video poster="static/images/narrow_ours_poster.jpg" id="teaser"
                autoplay controls muted loop playsinline preload="metadata"
-               style="max-height: 620px; width: auto; display: block; margin: 0 auto;">
-          <source src="static/videos/overview.mp4" type="video/mp4">
+               style="width: 100%; border-radius: 8px;">
+          <source src="static/videos/narrow_ours.mp4" type="video/mp4">
         </video>
         <h2 class="subtitle has-text-centered">
-          A hardware trial, replayed in real time. Top three panels: the nominal
-          command (dashed) against the command PRISM Shield actually issues (blue),
-          with the shaded spans marking the ticks where the filter intervened.
-          Bottom: the minimum distance from the <em>exact</em> trapezoid footprint to
-          the live point cloud, held above the
-          <span style="white-space:nowrap;">0.10 m</span> margin throughout.
+          A Unitree Go2W clearing a <strong>60 cm</strong> gap under PRISM Shield.
+          The robot's trapezoid is 43 cm wide at the front; its circumscribing circle is
+          82 cm, so no disc-inflated filter would let it even try. Nothing in the safety
+          loop reads odometry or a map &mdash; only the live Mid-360 cloud, in the body frame.
         </h2>
       </div>
     </div>
@@ -288,24 +294,55 @@
     </div>
   </section>
 
-  <!-- ===================== WHY EXACT DISTANCE ===================== -->
-  <section class="section hero is-light">
+  <!-- ===================== NARROW GAP ===================== -->
+  <section class="section hero is-light" id="narrow-gap">
     <div class="container is-max-desktop">
-      <h2 class="title is-3">Why exact distance matters</h2>
-      <div class="columns is-centered">
+      <h2 class="title is-3">1. Narrow-gap traversability</h2>
+      <div class="content has-text-justified">
+        <p>
+          A disc-inflated footprint is safe, but it is safe about a robot that does not
+          exist. The Go2W's trapezoid is 0.70 m long and 0.43 m wide at the front; its
+          circumscribing circle is 0.82 m across. Every gap between those two numbers is
+          one the robot could physically pass and the filter refuses.
+        </p>
+      </div>
+
+      <div class="video-grid cols-3">
+        <div>
+          <video poster="static/images/narrow_ours_poster.jpg" controls muted loop playsinline preload="none">
+            <source src="static/videos/narrow_ours.mp4" type="video/mp4">
+          </video>
+          <p class="video-cap"><b class="is-ours">PRISM-CBF (ours)</b>60 cm gap &mdash; passes through</p>
+        </div>
+        <div>
+          <video poster="static/images/narrow_ellipse_poster.jpg" controls muted loop playsinline preload="none">
+            <source src="static/videos/narrow_ellipse.mp4" type="video/mp4">
+          </video>
+          <p class="video-cap"><b class="is-base">Composite CBF (ellipse)</b>90 cm gap &mdash; stalls at the entrance</p>
+        </div>
+        <div>
+          <video poster="static/images/narrow_circle_poster.jpg" controls muted loop playsinline preload="none">
+            <source src="static/videos/narrow_circle.mp4" type="video/mp4">
+          </video>
+          <p class="video-cap"><b class="is-base">Composite CBF (circle)</b>100 cm gap &mdash; stalls at the entrance</p>
+        </div>
+      </div>
+
+      <div class="columns is-centered" style="margin-top: 2rem;">
         <div class="column is-half">
           <div class="content has-text-justified">
             <p>
-              A disc-inflated footprint is safe, but it is safe about a robot that does not
-              exist. The Go2W's trapezoid is 0.70 m long and 0.43 m wide at the front; its
-              circumscribing circle is 0.82 m across. Every gap between those two numbers is
-              a gap the robot could physically pass and the filter refuses.
+              The three runs above are single trials, chosen at each method's own limit:
+              PRISM Shield goes through a gap <strong>1.5&times; narrower</strong> than the
+              one that stops the ellipse baseline and <strong>1.7&times; narrower</strong>
+              than the one that stops the circle.
             </p>
             <p>
-              An ellipse recovers part of the difference and still leaves a wide band unusable.
-              Measured over 10 trials per gap width, PRISM Shield reaches a 100% success rate
-              at <strong>0.70 m</strong>; the composite CBF needs <strong>1.00 m</strong> with
-              an ellipse and <strong>1.10 m</strong> with a circle.
+              Over 10 trials per width the picture is the same. PRISM Shield reaches a
+              100% success rate at <strong>0.70 m</strong>; the composite CBF needs
+              <strong>1.00 m</strong> with an ellipse and <strong>1.10 m</strong> with a
+              circle. The 60 cm run shown here sits below that threshold &mdash; at 60 cm
+              our own success rate is 50%, and the baselines are at zero.
             </p>
           </div>
         </div>
@@ -317,6 +354,14 @@
           </figure>
         </div>
       </div>
+
+      <p class="refs">
+        [3] M. Harms, M. Jacquet, and K. Alexis, &ldquo;Safe quadrotor navigation using
+        composite control barrier functions,&rdquo; <em>ICRA</em>, 2025.<br>
+        [5] V. N. Sankaranarayanan et al., &ldquo;Reactive robot-centric safety for
+        autonomous navigation in constrained and dynamic environments,&rdquo;
+        <em>arXiv:2605.15782</em>, 2026.
+      </p>
     </div>
   </section>
 
@@ -426,6 +471,163 @@
     </div>
   </section>
 
+  <!-- ===================== ODOMETRY FAULT ===================== -->
+  <section class="section" id="odometry">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">2. Robustness to odometry failures</h2>
+      <div class="content has-text-justified">
+        <p>
+          We inject a drift fault into the odometry the nominal planner consumes. The
+          estimate diverges from ground truth and the planner's commands go with it &mdash;
+          but the barrier is computed from the live cloud in the body frame, so it keeps
+          vetoing the commands that would actually hit something. This is the practical
+          consequence of keeping the pose estimate out of the safety loop, and it is not
+          available to any filter whose obstacle set lives in a world frame.
+        </p>
+      </div>
+
+      <div class="video-grid cols-2">
+        <div>
+          <video poster="static/images/odom_nofilter_poster.jpg" controls muted loop playsinline preload="none">
+            <source src="static/videos/odom_nofilter.mp4" type="video/mp4">
+          </video>
+          <p class="video-cap"><b class="is-base">Without safety filter</b>the drifted command is executed as issued</p>
+        </div>
+        <div>
+          <video poster="static/images/odom_ours_poster.jpg" controls muted loop playsinline preload="none">
+            <source src="static/videos/odom_ours.mp4" type="video/mp4">
+          </video>
+          <p class="video-cap"><b class="is-ours">PRISM-CBF (ours)</b>same fault, same planner &mdash; clearance held</p>
+        </div>
+      </div>
+
+      <div class="columns is-centered" style="margin-top: 2rem;">
+        <div class="column is-four-fifths">
+          <figure>
+            <img src="static/images/odom_xy_t04.png"
+                 alt="Raw versus fault-injected odometry trajectory in the plane"
+                 style="width:100%; border-radius:8px;" loading="lazy">
+          </figure>
+          <p class="fig-note has-text-centered">
+            The injected fault in the plane: the planner's belief (red) leaves the true
+            path (black) at t &asymp; 26 s and never comes back.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MOTION CONSTRAINTS ===================== -->
+  <section class="section hero is-light" id="motion">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">3. Adaptation to different motion constraints</h2>
+      <div class="columns is-centered">
+        <div class="column is-half">
+          <div class="content has-text-justified">
+            <p>
+              The barrier rows are assembled from the footprint and the cloud; the
+              actuation model enters only as the box the QP optimizes inside. Restricting
+              that box turns the same filter into a different robot without retraining
+              anything:
+            </p>
+            <table class="table is-fullwidth is-striped tight">
+              <thead><tr><th>Model</th><th>Free inputs</th></tr></thead>
+              <tbody>
+                <tr><td>Hybrid</td><td>v<sub>x</sub>, v<sub>y</sub>, &omega;</td></tr>
+                <tr><td>Omnidirectional</td><td>v<sub>x</sub>, v<sub>y</sub> &nbsp;(&omega; = 0)</td></tr>
+                <tr><td>Unicycle</td><td>v<sub>x</sub>, &omega; &nbsp;(v<sub>y</sub> = 0)</td></tr>
+              </tbody>
+            </table>
+            <p>
+              The nominal command in the run shown is deliberately unsafe:
+              v = 0.5 m/s with &omega; = 0.8&thinsp;sin(1.25&thinsp;t) rad/s, driven straight
+              into the obstacles. Each model finds a different way out of the same scene,
+              and each keeps its clearance.
+            </p>
+          </div>
+        </div>
+        <div class="column is-half">
+          <video poster="static/images/motion_constraints_poster.jpg" controls muted loop playsinline preload="none">
+            <source src="static/videos/motion_constraints.mp4" type="video/mp4">
+          </video>
+          <p class="video-cap">Hybrid, omnidirectional and unicycle, under the same unsafe command</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== NOMINAL POLICIES ===================== -->
+  <section class="section" id="policies">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">4. Integration with nominal navigation policies</h2>
+      <div class="columns is-centered">
+        <div class="column is-half">
+          <video poster="static/images/nominal_policies_poster.jpg" controls muted loop playsinline preload="none">
+            <source src="static/videos/nominal_policies.mp4" type="video/mp4">
+          </video>
+          <p class="video-cap">Dense obstacle course, played at 2&times;</p>
+        </div>
+        <div class="column is-half">
+          <div class="content has-text-justified">
+            <p>
+              PRISM Shield is a filter, not a planner: it takes whatever
+              <code>/cmd_vel</code> arrives and returns the nearest safe command. That
+              makes the nominal policy a free choice. We drop it under two very different
+              ones without changing a parameter &mdash; <strong>Falco</strong>&nbsp;[6], a
+              sampling-based local planner, and <strong>NavRL</strong>&nbsp;[7], a learned
+              policy.
+            </p>
+            <p>
+              Neither was trained or tuned against the filter, and neither needs to know
+              it is there: the filter engages only on the ticks where the nominal command
+              would eat into the margin, and passes it through untouched otherwise.
+            </p>
+          </div>
+        </div>
+      </div>
+      <p class="refs">
+        [6] J. Zhang et al., &ldquo;Falco: Fast likelihood-based collision avoidance with
+        extension to human-guided navigation,&rdquo; <em>Journal of Field Robotics</em>,
+        37(8):1300&ndash;1313, 2020.<br>
+        [7] Z. Xu et al., &ldquo;NavRL: Learning safe flight in dynamic environments,&rdquo;
+        <em>IEEE Robotics and Automation Letters</em>, 2025.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== NONCONVEX BAR ===================== -->
+  <section class="section hero is-light" id="nonconvex">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">5. Non-convex footprint with an attached bar</h2>
+      <div class="content has-text-justified">
+        <p>
+          A bar bolted across the robot's back makes the footprint non-convex, and its
+          convex hull would claim the two empty wedges beside the body. Modelled instead
+          as a <strong>union</strong> of two convex parts, each part contributes its own
+          rows to the same QP. The yaw term of every row uses the <em>body-frame</em>
+          point, so an obstacle beside the bar's tip is far from the body origin and
+          constrains &omega; hard even while the body itself is clear &mdash; that falls
+          out of the kinematics, it is not a hand-added rotation penalty.
+        </p>
+      </div>
+
+      <div class="video-grid cols-2">
+        <div>
+          <video poster="static/images/bar_doorway_poster.jpg" controls muted loop playsinline preload="none">
+            <source src="static/videos/bar_doorway.mp4" type="video/mp4">
+          </video>
+          <p class="video-cap"><b>Doorway</b>the bar clears the frame the body would have ignored</p>
+        </div>
+        <div>
+          <video poster="static/images/bar_outdoor_poster.jpg" controls muted loop playsinline preload="none">
+            <source src="static/videos/bar_outdoor.mp4" type="video/mp4">
+          </video>
+          <p class="video-cap"><b>Obstacle field</b>both parts constrain the same QP throughout</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== RESULTS CAROUSEL ===================== -->
   <section class="hero is-small">
     <div class="hero-body">
@@ -480,6 +682,28 @@
     </div>
   </section>
 
+  <!-- ===================== INSIDE ONE TRIAL ===================== -->
+  <section class="section" id="inside">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Inside one trial</h2>
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <video poster="static/images/overview_poster.jpg" controls muted loop playsinline
+                 preload="none" style="width:100%; border-radius:8px;">
+            <source src="static/videos/overview.mp4" type="video/mp4">
+          </video>
+          <p class="fig-note has-text-centered">
+            The same hardware trial as a trace. Top three panels: the nominal command
+            (dashed) against the command PRISM Shield actually issues (blue), with the
+            shaded spans marking the ticks where the filter intervened. Bottom: the
+            minimum distance from the exact trapezoid footprint to the live cloud, held
+            above the 0.10 m margin throughout.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== REAL TIME ===================== -->
   <section class="section hero is-light">
     <div class="container is-max-desktop">
@@ -523,49 +747,6 @@
               Against the same program expressed through CVXPY the gap is roughly 600&ndash;700&times;.
               The deployed filter runs a 15 Hz control loop on an NVIDIA Jetson Orin NX
               (ROS 2 Foxy, CUDA), with the QP solve itself under 0.3 ms.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== ODOMETRY FAULT ===================== -->
-  <section class="section">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">Safety survives an odometry fault</h2>
-      <div class="columns is-centered">
-        <div class="column is-half">
-          <video poster="static/images/odom_fault_poster.jpg" controls muted loop playsinline
-                 preload="metadata" style="width:100%; border-radius:8px;">
-            <source src="static/videos/odom_fault.mp4" type="video/mp4">
-          </video>
-          <p class="fig-note has-text-centered">
-            The injected fault opening up in x and yaw, replayed in real time.
-          </p>
-        </div>
-        <div class="column is-half">
-          <figure>
-            <img src="static/images/odom_xy_t04.png"
-                 alt="Raw versus fault-injected odometry trajectory in the plane"
-                 style="width:100%; border-radius:8px;" loading="lazy">
-          </figure>
-          <p class="fig-note has-text-centered">
-            The same trial in the plane: the planner's belief (red) leaves the
-            true path (black) and never comes back.
-          </p>
-        </div>
-      </div>
-      <div class="columns is-centered">
-        <div class="column is-four-fifths">
-          <div class="content has-text-justified">
-            <p>
-              We inject a drift fault into the odometry the nominal planner consumes. The
-              estimate diverges from ground truth and the planner's commands go with it &mdash;
-              but the barrier is computed from the live cloud in the body frame, so it keeps
-              vetoing the commands that would actually hit something. This is the practical
-              consequence of keeping the pose estimate out of the safety loop, and it is not
-              available to any filter whose obstacle set lives in a world frame.
             </p>
           </div>
         </div>

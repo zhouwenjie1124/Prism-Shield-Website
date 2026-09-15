@@ -1,2 +1,4 @@
 .DS_Store
 *.pptx
+# 320 MB source; the page uses the transcoded prism_shield_video.mp4
+static/videos/*.mov

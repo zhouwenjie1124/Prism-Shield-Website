@@ -1,824 +1,1221 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Primary Meta Tags -->
-  <meta name="title" content="PRISM Shield: Certified Body-Frame Point-Cloud Safety Filtering for Polygonal Robot Footprints">
-  <meta name="description" content="A CBF safety filter that measures the exact distance from a polygonal robot footprint to every LiDAR point in the body frame, with no odometry in the loop. Runs at control rate on a Jetson Orin NX.">
-  <meta name="keywords" content="control barrier function, CBF-QP, safety filter, LiDAR, point cloud, polygonal footprint, quadruped, Unitree Go2W, ROS 2, safe navigation, robotics">
-  <!-- TODO: add your co-authors here -->
-  <meta name="author" content="Wenjie Zhou">
-  <meta name="robots" content="index, follow">
-  <meta name="language" content="English">
+    <!-- Primary Meta Tags -->
+    <meta
+      name="title"
+      content="PRISM Shield: Certified Body-Frame Point-Cloud Safety Filtering for Polygonal Robot Footprints"
+    />
+    <meta
+      name="description"
+      content="A CBF safety filter that measures the exact distance from a polygonal robot footprint to every LiDAR point in the body frame, with no odometry in the loop. Runs at control rate on a Jetson Orin NX."
+    />
+    <meta
+      name="keywords"
+      content="control barrier function, CBF-QP, safety filter, LiDAR, point cloud, polygonal footprint, quadruped, Unitree Go2W, ROS 2, safe navigation, robotics"
+    />
+    <!-- TODO: add your co-authors here -->
+    <meta name="author" content="Wenjie Zhou" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="article">
-  <!-- TODO: your lab / institution name -->
-  <meta property="og:site_name" content="PRISM Shield">
-  <meta property="og:title" content="PRISM Shield: Certified Body-Frame Point-Cloud Safety Filtering for Polygonal Robot Footprints">
-  <meta property="og:description" content="Exact footprint-to-point-cloud distance as a learned, provably conservative CBF constraint — hundreds of points, one QP, at control rate.">
-  <!-- TODO: update if you publish under a custom domain -->
-  <meta property="og:url" content="https://zhouwenjie1124.github.io/Prism-Shield-Website/">
-  <meta property="og:image" content="https://zhouwenjie1124.github.io/Prism-Shield-Website/static/images/social_preview.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="PRISM Shield — success rate versus gap width">
-  <meta property="article:author" content="Wenjie Zhou">
-  <meta property="article:section" content="Research">
-  <meta property="article:tag" content="control barrier function">
-  <meta property="article:tag" content="safe navigation">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article" />
+    <!-- TODO: your lab / institution name -->
+    <meta property="og:site_name" content="PRISM Shield" />
+    <meta
+      property="og:title"
+      content="PRISM Shield: Certified Body-Frame Point-Cloud Safety Filtering for Polygonal Robot Footprints"
+    />
+    <meta
+      property="og:description"
+      content="Exact footprint-to-point-cloud distance as a learned, provably conservative CBF constraint — hundreds of points, one QP, at control rate."
+    />
+    <!-- TODO: update if you publish under a custom domain -->
+    <meta
+      property="og:url"
+      content="https://zhouwenjie1124.github.io/Prism-Shield-Website/"
+    />
+    <meta
+      property="og:image"
+      content="https://zhouwenjie1124.github.io/Prism-Shield-Website/static/images/social_preview.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="PRISM Shield — success rate versus gap width"
+    />
+    <meta property="article:author" content="Wenjie Zhou" />
+    <meta property="article:section" content="Research" />
+    <meta property="article:tag" content="control barrier function" />
+    <meta property="article:tag" content="safe navigation" />
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="PRISM Shield: Certified Body-Frame Point-Cloud Safety Filtering">
-  <meta name="twitter:description" content="Exact footprint-to-point-cloud distance as a learned, provably conservative CBF constraint — hundreds of points, one QP, at control rate.">
-  <meta name="twitter:image" content="https://zhouwenjie1124.github.io/Prism-Shield-Website/static/images/social_preview.png">
-  <meta name="twitter:image:alt" content="PRISM Shield — success rate versus gap width">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="PRISM Shield: Certified Body-Frame Point-Cloud Safety Filtering"
+    />
+    <meta
+      name="twitter:description"
+      content="Exact footprint-to-point-cloud distance as a learned, provably conservative CBF constraint — hundreds of points, one QP, at control rate."
+    />
+    <meta
+      name="twitter:image"
+      content="https://zhouwenjie1124.github.io/Prism-Shield-Website/static/images/social_preview.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="PRISM Shield — success rate versus gap width"
+    />
 
-  <!-- Academic/Research Specific -->
-  <meta name="citation_title" content="PRISM Shield: Certified Body-Frame Point-Cloud Safety Filtering for Polygonal Robot Footprints">
-  <meta name="citation_author" content="Zhou, Wenjie">
-  <meta name="citation_publication_date" content="2026">
-  <!-- TODO: fill in once submitted / accepted
+    <!-- Academic/Research Specific -->
+    <meta
+      name="citation_title"
+      content="PRISM Shield: Certified Body-Frame Point-Cloud Safety Filtering for Polygonal Robot Footprints"
+    />
+    <meta name="citation_author" content="Zhou, Wenjie" />
+    <meta name="citation_publication_date" content="2026" />
+    <!-- TODO: fill in once submitted / accepted
   <meta name="citation_conference_title" content="CONFERENCE_NAME">
   <meta name="citation_pdf_url" content="https://arxiv.org/pdf/XXXX.XXXXX">
   -->
 
-  <!-- Additional SEO -->
-  <meta name="theme-color" content="#2563eb">
-  <meta name="msapplication-TileColor" content="#2563eb">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <!-- Additional SEO -->
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="msapplication-TileColor" content="#2563eb" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
-  <!-- Preconnect for performance -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://ajax.googleapis.com">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://ajax.googleapis.com" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 
-  <title>PRISM Shield — Certified Body-Frame Point-Cloud Safety Filtering</title>
+    <title>
+      PRISM Shield — Certified Body-Frame Point-Cloud Safety Filtering
+    </title>
 
-  <!-- Favicon and App Icons -->
-  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
-  <link rel="apple-touch-icon" href="static/images/favicon.ico">
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/x-icon" href="static/images/favicon.ico" />
+    <link rel="apple-touch-icon" href="static/images/favicon.ico" />
 
-  <!-- Critical CSS -->
-  <link rel="stylesheet" href="static/css/bulma.min.css">
-  <link rel="stylesheet" href="static/css/index.css">
+    <!-- Critical CSS -->
+    <link rel="stylesheet" href="static/css/bulma.min.css" />
+    <link rel="stylesheet" href="static/css/index.css" />
 
-  <!-- Non-critical CSS -->
-  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
-    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
-    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  </noscript>
+    <!-- Non-critical CSS -->
+    <link
+      rel="preload"
+      href="static/css/bulma-carousel.min.css"
+      as="style"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
+    />
+    <link
+      rel="preload"
+      href="static/css/bulma-slider.min.css"
+      as="style"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
+    />
+    <link
+      rel="preload"
+      href="static/css/fontawesome.all.min.css"
+      as="style"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
+    />
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
+      as="style"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
+    />
+    <noscript>
+      <link rel="stylesheet" href="static/css/bulma-carousel.min.css" />
+      <link rel="stylesheet" href="static/css/bulma-slider.min.css" />
+      <link rel="stylesheet" href="static/css/fontawesome.all.min.css" />
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
+      />
+    </noscript>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
 
-  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="static/js/fontawesome.all.min.js"></script>
-  <script defer src="static/js/bulma-carousel.min.js"></script>
-  <script defer src="static/js/bulma-slider.min.js"></script>
-  <script defer src="static/js/index.js"></script>
+    <script
+      defer
+      src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+    ></script>
+    <script defer src="static/js/fontawesome.all.min.js"></script>
+    <script defer src="static/js/bulma-carousel.min.js"></script>
+    <script defer src="static/js/bulma-slider.min.js"></script>
+    <script defer src="static/js/index.js"></script>
 
-  <style>
-    /* small additions on top of the template's index.css */
-    .stat-grid { display: flex; flex-wrap: wrap; gap: 1.25rem; justify-content: center; margin: 2rem 0 0.5rem; }
-    .stat-card { flex: 1 1 200px; max-width: 260px; text-align: center; padding: 1.25rem 1rem;
-                 border: 1px solid rgba(0,0,0,.08); border-radius: 12px; background: #fff; }
-    .stat-num  { font-size: 2rem; font-weight: 800; line-height: 1.1; color: #2563eb; }
-    .stat-lbl  { font-size: .9rem; color: #4a4a4a; margin-top: .4rem; }
-    .fig-note  { font-size: .92rem; color: #555; margin-top: .6rem; }
-    .ascii     { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85rem;
-                 line-height: 1.35; background: #f6f8fa; padding: 1rem; border-radius: 8px; overflow-x: auto; }
-    table.tight td, table.tight th { padding: .4em .75em; }
-    .video-grid { display: grid; gap: 1.1rem; margin-top: 1.5rem; }
-    .video-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
-    .video-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
-    @media (max-width: 768px) {
-      .video-grid.cols-3, .video-grid.cols-2 { grid-template-columns: 1fr; }
-    }
-    .video-grid video { width: 100%; border-radius: 8px; display: block; background: #000; }
-    .video-cap { font-size: .93rem; text-align: center; margin-top: .55rem; color: #4a4a4a; }
-    .video-cap b { display: block; font-size: 1rem; margin-bottom: .1rem; }
-    .is-ours { color: #2563eb; }
-    .is-base { color: #b03a2e; }
-    .refs { font-size: .82rem; color: #666; margin-top: 1.5rem; line-height: 1.5; }
-  </style>
+    <style>
+      /* small additions on top of the template's index.css */
+      .stat-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        justify-content: center;
+        margin: 2rem 0 0.5rem;
+      }
+      .stat-card {
+        flex: 1 1 200px;
+        max-width: 260px;
+        text-align: center;
+        padding: 1.25rem 1rem;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        background: #fff;
+      }
+      .stat-num {
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1.1;
+        color: #2563eb;
+      }
+      .stat-lbl {
+        font-size: 0.9rem;
+        color: #4a4a4a;
+        margin-top: 0.4rem;
+      }
+      .fig-note {
+        font-size: 0.92rem;
+        color: #555;
+        margin-top: 0.6rem;
+      }
+      .ascii {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.85rem;
+        line-height: 1.35;
+        background: #f6f8fa;
+        padding: 1rem;
+        border-radius: 8px;
+        overflow-x: auto;
+      }
+      table.tight td,
+      table.tight th {
+        padding: 0.4em 0.75em;
+      }
+      .video-grid {
+        display: grid;
+        gap: 1.1rem;
+        margin-top: 1.5rem;
+      }
+      .video-grid.cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .video-grid.cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      @media (max-width: 768px) {
+        .video-grid.cols-3,
+        .video-grid.cols-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+      .video-grid video {
+        width: 100%;
+        border-radius: 8px;
+        display: block;
+        background: #000;
+      }
+      /* odom_ours.mp4 is 1280x758, odom_nofilter.mp4 is 1280x720 */
+      #odometry .video-grid video {
+        aspect-ratio: 16 / 9;
+        object-fit: contain;
+      }
+      .video-cap {
+        font-size: 0.93rem;
+        text-align: center;
+        margin-top: 0.55rem;
+        color: #4a4a4a;
+      }
+      .video-cap b {
+        display: block;
+        font-size: 1rem;
+        margin-bottom: 0.1rem;
+      }
+      .is-ours {
+        color: #2563eb;
+      }
+      .is-base {
+        color: #b03a2e;
+      }
+      .issue-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+      }
+      @media (max-width: 768px) {
+        .issue-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .issue-card {
+        display: flex;
+        gap: 1rem;
+        padding: 1.25rem;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-left: 4px solid #b03a2e;
+        border-radius: 12px;
+        background: #fff;
+        text-align: left;
+      }
+      .issue-num {
+        flex: none;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background: #b03a2e;
+        color: #fff;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .issue-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #b03a2e;
+        margin-bottom: 0.35rem;
+      }
+      .issue-body {
+        font-size: 0.95rem;
+        color: #4a4a4a;
+        line-height: 1.5;
+      }
+      .model-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+      @media (max-width: 768px) {
+        .model-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .model-card {
+        text-align: center;
+        padding: 1rem;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        background: #fff;
+      }
+      .model-name {
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: #2563eb;
+      }
+      .model-inputs {
+        font-size: 1.15rem;
+        margin-top: 0.35rem;
+      }
+      .model-lock {
+        font-size: 0.88rem;
+        color: #b03a2e;
+        margin-top: 0.2rem;
+      }
+      .refs {
+        font-size: 0.82rem;
+        color: #666;
+        margin-top: 1.5rem;
+        line-height: 1.5;
+      }
+    </style>
 
-  <!-- Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "ScholarlyArticle",
-    "headline": "PRISM Shield: Certified Body-Frame Point-Cloud Safety Filtering for Polygonal Robot Footprints",
-    "description": "A CBF safety filter that measures the exact distance from a polygonal robot footprint to every LiDAR point in the body frame, with no odometry in the loop.",
-    "author": [
-      { "@type": "Person", "name": "Wenjie Zhou" }
-    ],
-    "datePublished": "2026",
-    "keywords": "control barrier function, safety filter, LiDAR, polygonal footprint, quadruped",
-    "url": "https://zhouwenjie1124.github.io/Prism-Shield-Website/"
-  }
-  </script>
-</head>
-<body>
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ScholarlyArticle",
+        "headline": "PRISM Shield: Certified Body-Frame Point-Cloud Safety Filtering for Polygonal Robot Footprints",
+        "description": "A CBF safety filter that measures the exact distance from a polygonal robot footprint to every LiDAR point in the body frame, with no odometry in the loop.",
+        "author": [{ "@type": "Person", "name": "Wenjie Zhou" }],
+        "datePublished": "2026",
+        "keywords": "control barrier function, safety filter, LiDAR, polygonal footprint, quadruped",
+        "url": "https://zhouwenjie1124.github.io/Prism-Shield-Website/"
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Scroll to Top Button -->
+    <button
+      class="scroll-to-top"
+      onclick="scrollToTop()"
+      title="Scroll to top"
+      aria-label="Scroll to top"
+    >
+      <i class="fas fa-chevron-up"></i>
+    </button>
 
-  <!-- Scroll to Top Button -->
-  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
-    <i class="fas fa-chevron-up"></i>
-  </button>
+    <main id="main-content">
+      <!-- ===================== HERO ===================== -->
+      <section class="hero">
+        <div class="hero-body">
+          <div class="container is-max-desktop">
+            <div class="columns is-centered">
+              <div class="column has-text-centered">
+                <figure
+                  class="image"
+                  style="max-width: 260px; margin: 0 auto 1.5rem"
+                >
+                  <img
+                    src="static/images/logo.png"
+                    alt="PRISM Shield logo"
+                    loading="eager"
+                  />
+                </figure>
 
-  <main id="main-content">
+                <h1 class="title is-1 publication-title">
+                  PRISM Shield: Point-Cloud Robot-Frame Inter-Sample Safety
+                  Filtering for Multi-Polygon Footprints
+                </h1>
 
-  <!-- ===================== HERO ===================== -->
-  <section class="hero">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column has-text-centered">
+                <!-- TODO: add co-authors, personal links and the equal-contribution marker -->
+                <div class="is-size-5 publication-authors">
+                  <span class="author-block">
+                    <a href="https://github.com/zhouwenjie1124" target="_blank"
+                      >Wenjie Zhou</a
+                    ><sup>1</sup>,
+                  </span>
+                  <span class="author-block">
+                    <!-- TODO: add Jay Wang's homepage link -->
+                    Jay Wang<sup>1,*</sup>
+                  </span>
+                </div>
 
-            <figure class="image" style="max-width: 260px; margin: 0 auto 1.5rem;">
-              <img src="static/images/logo.png" alt="PRISM Shield logo" loading="eager">
-            </figure>
+                <div class="is-size-5 publication-authors">
+                  <!-- TODO: replace with your lab / university -->
+                  <span class="author-block"
+                    ><sup>1</sup>University of Manitoba</span
+                  >
+                  <br />
+                  <span class="author-block is-size-6"
+                    ><sup>*</sup>Corresponding author</span
+                  >
+                  <br />
+                  <span class="author-block is-size-6" style="color: #666"
+                    >Under Submission</span
+                  >
+                </div>
 
-            <h1 class="title is-1 publication-title">
-              PRISM Shield: Certified Body-Frame Point-Cloud Safety Filtering
-              for Polygonal Robot Footprints
-            </h1>
+                <div class="column has-text-centered">
+                  <div class="publication-links">
+                    <!-- TODO: point at the real PDF once it exists -->
+                    <span class="link-block">
+                      <a
+                        href="static/pdfs/paper.pdf"
+                        class="external-link button is-normal is-rounded is-dark"
+                      >
+                        <span class="icon"
+                          ><i class="fas fa-file-pdf"></i
+                        ></span>
+                        <span>Paper</span>
+                      </a>
+                    </span>
 
-            <!-- TODO: add co-authors, personal links and the equal-contribution marker -->
-            <div class="is-size-5 publication-authors">
-              <span class="author-block">
-                <a href="https://github.com/zhouwenjie1124" target="_blank">Wenjie Zhou</a><sup>1</sup>
-              </span>
+                    <!-- TODO: replace XXXX.XXXXX with the arXiv id -->
+                    <span class="link-block">
+                      <a
+                        href="https://arxiv.org/abs/XXXX.XXXXX"
+                        class="external-link button is-normal is-rounded is-dark"
+                      >
+                        <span class="icon"><i class="ai ai-arxiv"></i></span>
+                        <span>arXiv</span>
+                      </a>
+                    </span>
+
+                    <span class="link-block">
+                      <a
+                        href="https://github.com/zhouwenjie1124/PRISM-Shield"
+                        class="external-link button is-normal is-rounded is-dark"
+                        target="_blank"
+                      >
+                        <span class="icon"><i class="fab fa-github"></i></span>
+                        <span>Code</span>
+                      </a>
+                    </span>
+
+                    <span class="link-block">
+                      <a
+                        href="#video"
+                        class="external-link button is-normal is-rounded is-dark"
+                      >
+                        <span class="icon"><i class="fas fa-video"></i></span>
+                        <span>Video</span>
+                      </a>
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <div class="is-size-5 publication-authors">
-              <!-- TODO: replace with your lab / university -->
-              <span class="author-block"><sup>1</sup>YOUR_LAB, YOUR_UNIVERSITY</span>
-              <br>
-              <span class="author-block is-size-6" style="color:#666;">Preprint, 2026</span>
+      <!-- ===================== TEASER ===================== -->
+      <section class="hero teaser" id="video">
+        <div class="container is-max-desktop">
+          <div class="hero-body">
+            <video
+              poster="static/images/prism_shield_video_poster.jpg"
+              id="teaser"
+              controls
+              playsinline
+              preload="metadata"
+              style="width: 100%; border-radius: 8px"
+            >
+              <source
+                src="static/videos/prism_shield_video.mp4"
+                type="video/mp4"
+              />
+            </video>
+            <h2 class="subtitle has-text-centered">
+              Overview video of PRISM Shield: a multi-polygon footprint,
+              point-cloud safety filtering in the robot's body frame.
+            </h2>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== ABSTRACT ===================== -->
+      <section class="section hero is-light">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered has-text-centered">
+            <div class="column is-four-fifths">
+              <h2 class="title is-3">Abstract</h2>
+              <div class="content has-text-justified">
+                <p>
+                  Safe navigation through narrow passages requires collision
+                  avoidance methods that accurately account for the robot's true
+                  footprint while continuing to provide safety guarantees when
+                  localization is unreliable. Existing control barrier function
+                  (CBF) safety filters often approximate the robot footprint
+                  using conservative enclosing primitives, which limits
+                  traversability in confined spaces. We present PRISM Shield
+                  (<strong>P</strong>oint-cloud <strong>R</strong>obot-frame
+                  <strong>I</strong>nter-<strong>S</strong>ample safety for
+                  <strong>M</strong>ulti-polygon footprints), a CBF-based safety
+                  filter that operates directly on body-frame point clouds and
+                  polygonal robot footprints; nonconvex footprints are
+                  represented as unions of convex polygons.
+                </p>
+                <p>
+                  We employ a solver-supervised encoder to estimate the
+                  distances and separating normals from point-cloud points to
+                  the robot footprint, and select the most critical points to
+                  construct the CBF safety constraints. PRISM Shield is
+                  validated through simulations and real-world experiments on a
+                  wheeled quadruped. The results show reduced inter-sample
+                  boundary violations, improved narrow-space traversability, and
+                  robustness to odometry failures. As a modular safety filter,
+                  PRISM Shield can be directly integrated with robot platforms
+                  using different navigation policies and motion constraints,
+                  providing accurate footprint-aware safety constraints without
+                  modifying the underlying navigation algorithm and thereby
+                  improving safe traversal in narrow, obstacle-dense
+                  environments.
+                </p>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <div class="column has-text-centered">
-              <div class="publication-links">
+      <!-- ===================== ISSUES WITH CURRENT CBF ===================== -->
+      <section class="section" id="issues">
+        <div class="container is-max-desktop">
+          <h2 class="title is-3 has-text-centered">
+            The Issue with Current CBF
+          </h2>
+          <div class="issue-grid">
+            <div class="issue-card">
+              <div class="issue-num">1</div>
+              <div>
+                <div class="issue-title">Relies on odometry</div>
+                <div class="issue-body">
+                  Obstacles are expressed in a world or map frame, so the
+                  barrier is only as good as the pose estimate. When
+                  <strong>localization drifts or fails</strong>, the safety
+                  guarantee fails with it.
+                </div>
+              </div>
+            </div>
+            <div class="issue-card">
+              <div class="issue-num">2</div>
+              <div>
+                <div class="issue-title">Requires robot modeling</div>
+                <div class="issue-body">
+                  The barrier needs a <strong>hand-crafted model</strong> of
+                  the robot and a distance function derived for it. A new
+                  platform, or a new payload on the same one, means deriving
+                  it again.
+                </div>
+              </div>
+            </div>
+            <div class="issue-card">
+              <div class="issue-num">3</div>
+              <div>
+                <div class="issue-title">Cannot represent arbitrary shapes</div>
+                <div class="issue-body">
+                  Robots and obstacles are inflated to
+                  <strong>discs, ellipses or other simple primitives</strong>.
+                  The Go2W is 0.43 m wide, but its enclosing circle is 0.82 m,
+                  so the filter refuses gaps the robot could pass.
+                </div>
+              </div>
+            </div>
+            <div class="issue-card">
+              <div class="issue-num">4</div>
+              <div>
+                <div class="issue-title">
+                  Hard to build CBFs from exact point clouds and polygons
+                </div>
+                <div class="issue-body">
+                  Constructing barriers between a
+                  <strong>polygonal robot</strong> and
+                  <strong>raw point-cloud obstacles</strong> is difficult to
+                  implement: the distance to every point must be computed and
+                  differentiated at control rate.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-                <!-- TODO: point at the real PDF once it exists -->
-                <span class="link-block">
-                  <a href="static/pdfs/paper.pdf" class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon"><i class="fas fa-file-pdf"></i></span>
-                    <span>Paper</span>
-                  </a>
-                </span>
+      <!-- ===================== METHOD ===================== -->
+      <section class="section hero is-light" id="method">
+        <div class="container is-max-desktop">
+          <h2 class="title is-3">Method</h2>
 
-                <!-- TODO: replace XXXX.XXXXX with the arXiv id -->
-                <span class="link-block">
-                  <a href="https://arxiv.org/abs/XXXX.XXXXX" class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon"><i class="ai ai-arxiv"></i></span>
-                    <span>arXiv</span>
-                  </a>
-                </span>
+          <figure>
+            <img
+              src="static/images/PRISM_System_Framework.png"
+              alt="PRISM Shield system framework: onboard LiDAR sensing feeds a deep unfolded neural encoder (DUNE), whose distance estimates form point-wise barrier constraints over a multi-polygon footprint; the resulting QP filters a high-level policy's nominal command into a safe command"
+              style="width: 100%"
+              loading="lazy"
+            />
+          </figure>
+          <p class="fig-note has-text-centered">
+            Overview of the PRISM Shield framework. Onboard LiDAR measurements
+            are processed by DUNE to estimate point-to-footprint distances and
+            directions, which are used by the CBF filter to convert nominal
+            commands into safe control inputs.
+          </p>
 
-                <span class="link-block">
-                  <a href="https://github.com/zhouwenjie1124/PRISM-Shield"
-                     class="external-link button is-normal is-rounded is-dark" target="_blank">
-                    <span class="icon"><i class="fab fa-github"></i></span>
-                    <span>Code</span>
-                  </a>
-                </span>
-
-                <span class="link-block">
-                  <a href="#video" class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon"><i class="fas fa-video"></i></span>
-                    <span>Video</span>
-                  </a>
-                </span>
-
+          <div class="columns is-centered">
+            <div class="column">
+              <h3 class="title is-4">Exact distance, learned</h3>
+              <div class="content has-text-justified">
+                <p>
+                  The distance from a point to a convex polygon is the value of
+                  a small convex program. Solving one per LiDAR point per
+                  control tick is far too slow, so PRISM trains a network to
+                  emit that value <em>and</em> its gradient direction directly,
+                  in the footprint's own frame. Startup refuses to load a
+                  checkpoint whose baked-in geometry disagrees with the
+                  footprint in the config, so the model and the polygon can
+                  never silently drift apart.
+                </p>
               </div>
             </div>
 
+            <div class="column">
+              <h3 class="title is-4">Non-convex robots</h3>
+              <div class="content has-text-justified">
+                <p>
+                  A robot carrying a board across its back is not convex, and
+                  its convex hull would claim the empty wedges on either side.
+                  Instead the robot is a <strong>union</strong>
+                  of convex parts.
+                </p>
+                <p>
+                  The union's safety condition is the <em>intersection</em> of
+                  the per-part conditions, so every part contributes its own
+                  rows to the same QP and nothing ever has to differentiate a
+                  non-smooth <code>min</code>.
+                </p>
+              </div>
+            </div>
+
+            <div class="column">
+              <h3 class="title is-4">Body frame, no odometry</h3>
+              <div class="content has-text-justified">
+                <p>
+                  The footprint polygon and the raw Mid-360 cloud live in the
+                  same body frame, so the barrier needs no pose estimate at all.
+                  The nominal planner may localize however it likes; when its
+                  estimate drifts, the command it produces is wrong but the
+                  filter that vets that command is unaffected. Safety degrades
+                  gracefully instead of failing with the map.
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ===================== TEASER ===================== -->
-  <section class="hero teaser" id="video">
-    <div class="container is-max-desktop">
-      <div class="hero-body">
-        <video poster="static/images/narrow_ours_poster.jpg" id="teaser"
-               autoplay controls muted loop playsinline preload="metadata"
-               style="width: 100%; border-radius: 8px;">
-          <source src="static/videos/narrow_ours.mp4" type="video/mp4">
-        </video>
-        <h2 class="subtitle has-text-centered">
-          A Unitree Go2W clearing a <strong>60 cm</strong> gap under PRISM Shield.
-          The robot's trapezoid is 43 cm wide at the front; its circumscribing circle is
-          82 cm, so no disc-inflated filter would let it even try. Nothing in the safety
-          loop reads odometry or a map &mdash; only the live Mid-360 cloud, in the body frame.
-        </h2>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== ABSTRACT ===================== -->
-  <section class="section hero is-light">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          <h2 class="title is-3">Abstract</h2>
-          <div class="content has-text-justified">
-            <p>
-              Control-barrier safety filters almost always inflate the robot to a disc or an
-              ellipse, because that is the only shape for which the distance to an obstacle has
-              a closed form. The price is paid in the gaps the robot then refuses to enter: a
-              0.70 &times; 0.43 m trapezoid inscribed in its circumscribing circle claims 0.82 m
-              of width it does not occupy.
-            </p>
-            <p>
-              We present <strong>PRISM Shield</strong>, a safety filter that measures the
-              <strong>exact</strong> distance from a robot's polygonal footprint to every LiDAR
-              point, directly in the <strong>body frame</strong>. A small learned network replaces
-              the per-point convex program that this distance would otherwise require, so hundreds
-              of points and a single QP run on-board at control rate. Because the footprint and
-              the point cloud live in the same frame, there is <strong>no odometry in the safety
-              loop</strong>: a SLAM fault can wreck the nominal planner without touching the
-              safety guarantee.
-            </p>
-            <p>
-              The learned distance is <em>never optimistic</em> &mdash; measured over 3.8 M
-              samples it under-reports the true distance in every range band, so the barrier it
-              induces is conservative by construction. Non-convex robots are handled as a union
-              of convex parts, each contributing its own rows to the same QP without ever
-              differentiating a non-smooth minimum. A control-margin (sampled-data) formulation
-              closes the remaining inter-sample gap that a zero-order-hold CBF-QP leaves open.
-              On a Unitree Go2W with a Livox Mid-360, PRISM Shield clears 0.70 m gaps at a 100%
-              success rate where a circle-inflated composite CBF needs 1.10 m.
-            </p>
+          <h3 class="title is-4" id="dune" style="margin-top: 2.5rem">
+            DUNE: Deep Unfolded Neural Encoder
+          </h3>
+          <div class="columns is-vcentered">
+            <div class="column is-5">
+              <div class="content has-text-justified">
+                <p>
+                  DUNE is adapted from NeuPAN&nbsp;<a
+                    href="https://doi.org/10.1109/TRO.2025.3554252"
+                    target="_blank"
+                    >[8]</a
+                  >. It is a solver-supervised encoder: it is trained on the
+                  solutions of the point-to-polygon convex program, and at run
+                  time it predicts the distance and separating normal from
+                  every point in the cloud to each convex part of the footprint
+                  in a single pass.
+                </p>
+                <p>
+                  On its own, DUNE occasionally over-reports the distance by a
+                  few millimetres (a). With the dual projection step, every
+                  estimate is at or below the true distance (b), so the barrier
+                  built from it can only shrink the safe set, never inflate it.
+                </p>
+              </div>
+            </div>
+            <div class="column is-7">
+              <figure>
+                <img
+                  src="static/images/prism_accuracy_signed_compare.png"
+                  alt="Signed distance error of DUNE versus true distance, (a) without and (b) with dual projection; with dual projection the error is never positive"
+                  style="width: 100%"
+                  loading="lazy"
+                />
+              </figure>
+              <p class="fig-note has-text-centered">
+                Signed error <em>d&#770; &minus; d</em> against true distance
+                <em>d</em>, (a) DUNE alone and (b) DUNE with dual projection.
+                The black line is the median.
+              </p>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ===================== HEADLINE NUMBERS ===================== -->
-  <section class="section">
-    <div class="container is-max-desktop">
-      <div class="stat-grid">
-        <div class="stat-card">
-          <div class="stat-num">0.70 m</div>
-          <div class="stat-lbl">narrowest gap cleared at 100% success<br>(circle baseline: 1.10 m)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">0.00%</div>
-          <div class="stat-lbl">optimistic distance predictions<br>over 3.8 M samples</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">15&times;</div>
-          <div class="stat-lbl">faster than the exact SOCP baseline<br>it replaces (1 k points, ECOS)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">0</div>
-          <div class="stat-lbl">odometry topics subscribed by<br>the safety filter</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== NARROW GAP ===================== -->
-  <section class="section hero is-light" id="narrow-gap">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">1. Narrow-gap traversability</h2>
-      <div class="content has-text-justified">
-        <p>
-          A disc-inflated footprint is safe, but it is safe about a robot that does not
-          exist. The Go2W's trapezoid is 0.70 m long and 0.43 m wide at the front; its
-          circumscribing circle is 0.82 m across. Every gap between those two numbers is
-          one the robot could physically pass and the filter refuses.
-        </p>
-      </div>
-
-      <div class="video-grid cols-3">
-        <div>
-          <video poster="static/images/narrow_ours_poster.jpg" controls muted loop playsinline preload="none">
-            <source src="static/videos/narrow_ours.mp4" type="video/mp4">
-          </video>
-          <p class="video-cap"><b class="is-ours">PRISM-CBF (ours)</b>60 cm gap &mdash; passes through</p>
-        </div>
-        <div>
-          <video poster="static/images/narrow_ellipse_poster.jpg" controls muted loop playsinline preload="none">
-            <source src="static/videos/narrow_ellipse.mp4" type="video/mp4">
-          </video>
-          <p class="video-cap"><b class="is-base">Composite CBF (ellipse)</b>90 cm gap &mdash; stalls at the entrance</p>
-        </div>
-        <div>
-          <video poster="static/images/narrow_circle_poster.jpg" controls muted loop playsinline preload="none">
-            <source src="static/videos/narrow_circle.mp4" type="video/mp4">
-          </video>
-          <p class="video-cap"><b class="is-base">Composite CBF (circle)</b>100 cm gap &mdash; stalls at the entrance</p>
-        </div>
-      </div>
-
-      <div class="columns is-centered" style="margin-top: 2rem;">
-        <div class="column is-half">
-          <div class="content has-text-justified">
-            <p>
-              The three runs above are single trials, chosen at each method's own limit:
-              PRISM Shield goes through a gap <strong>1.5&times; narrower</strong> than the
-              one that stops the ellipse baseline and <strong>1.7&times; narrower</strong>
-              than the one that stops the circle.
-            </p>
-            <p>
-              Over 10 trials per width the picture is the same. PRISM Shield reaches a
-              100% success rate at <strong>0.70 m</strong>; the composite CBF needs
-              <strong>1.00 m</strong> with an ellipse and <strong>1.10 m</strong> with a
-              circle. The 60 cm run shown here sits below that threshold &mdash; at 60 cm
-              our own success rate is 50%, and the baselines are at zero.
-            </p>
+          <h3 class="title is-4" id="kinematics" style="margin-top: 2.5rem">
+            Body-Frame Point-Cloud Kinematics
+          </h3>
+          <div class="columns is-vcentered">
+            <div class="column is-7">
+              <figure>
+                <img
+                  src="static/images/point_cloud_model.png"
+                  alt="Body-frame point-cloud model: a robot footprint made of a trapezoid body and a rectangular bar, obstacle points connected to the footprint, and an inset decomposing a point's velocity into translational and rotational parts"
+                  style="width: 100%"
+                  loading="lazy"
+                />
+              </figure>
+              <p class="fig-note has-text-centered">
+                The footprint is a union of convex polygons (body and bar), and
+                each obstacle point <em>p<sub>i</sub></em> is measured against
+                it directly. Inset: the point's velocity
+                <em>p&#775;<sub>i</sub></em> splits into a translational and a
+                rotational part.
+              </p>
+            </div>
+            <div class="column is-5">
+              <div class="content has-text-justified">
+                <p>
+                  The barrier is written directly on the LiDAR points in the
+                  robot's body frame. For a static obstacle, a point
+                  <em>p<sub>i</sub></em> moves relative to the robot only
+                  because the robot moves:
+                </p>
+                <p class="has-text-centered">
+                  <em>p&#775;<sub>i</sub></em> = &minus;<em>v</em> &minus;
+                  <em>&omega;</em> &times; <em>p<sub>i</sub></em>
+                </p>
+                <p>
+                  The first term is the translational part, and the second is
+                  the rotational part, which grows with the point's distance
+                  from the body origin. Both are linear in the command
+                  (<em>v</em>, <em>&omega;</em>), so each barrier becomes one
+                  linear row in the QP, with no pose estimate involved.
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="column is-half">
-          <figure>
-            <img src="static/images/success_vs_gap.png"
-                 alt="Success rate versus gap width for PRISM-CBF, composite-CBF with a circle, and composite-CBF with an ellipse"
-                 style="width:100%; border-radius:8px;" loading="lazy">
-          </figure>
-        </div>
-      </div>
-
-      <p class="refs">
-        [3] M. Harms, M. Jacquet, and K. Alexis, &ldquo;Safe quadrotor navigation using
-        composite control barrier functions,&rdquo; <em>ICRA</em>, 2025.<br>
-        [5] V. N. Sankaranarayanan et al., &ldquo;Reactive robot-centric safety for
-        autonomous navigation in constrained and dynamic environments,&rdquo;
-        <em>arXiv:2605.15782</em>, 2026.
-      </p>
-    </div>
-  </section>
-
-  <!-- ===================== METHOD ===================== -->
-  <section class="section">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">Method</h2>
-
-      <div class="columns is-centered">
-
-        <div class="column">
-          <h3 class="title is-4">Exact distance, learned</h3>
-          <div class="content has-text-justified">
-            <p>
-              The distance from a point to a convex polygon is the value of a small convex
-              program. Solving one per LiDAR point per control tick is far too slow, so PRISM
-              trains a network to emit that value <em>and</em> its gradient direction directly,
-              in the footprint's own frame. Startup refuses to load a checkpoint whose baked-in
-              geometry disagrees with the footprint in the config, so the model and the polygon
-              can never silently drift apart.
-            </p>
-          </div>
-        </div>
-
-        <div class="column">
-          <h3 class="title is-4">Non-convex robots</h3>
-          <div class="content has-text-justified">
-            <p>
-              A robot carrying a board across its back is not convex, and its convex hull would
-              claim the empty wedges on either side. Instead the robot is a <strong>union</strong>
-              of convex parts:
-            </p>
-            <pre class="ascii">      board (part "bar")
- ─────────────────────────
-          ███████
-          ███████   body
-          ███████</pre>
-            <p>
-              The union's safety condition is the <em>intersection</em> of the per-part
-              conditions, so every part contributes its own rows to the same QP and nothing
-              ever has to differentiate a non-smooth <code>min</code>.
-            </p>
-          </div>
-        </div>
-
-        <div class="column">
-          <h3 class="title is-4">Body frame, no odometry</h3>
-          <div class="content has-text-justified">
-            <p>
-              The footprint polygon and the raw Mid-360 cloud live in the same body frame, so
-              the barrier needs no pose estimate at all. The nominal planner may localize
-              however it likes; when its estimate drifts, the command it produces is wrong but
-              the filter that vets that command is unaffected. Safety degrades gracefully
-              instead of failing with the map.
-            </p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== CONSERVATISM ===================== -->
-  <section class="section hero is-light">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">The learned distance is never optimistic</h2>
-      <div class="columns is-centered">
-        <div class="column is-full">
-          <figure>
-            <img src="static/images/prism_accuracy_nearfield.png"
-                 alt="Signed distance error and normal-direction error of the PRISM network versus true distance"
-                 style="width:100%; border-radius:8px;" loading="lazy">
-          </figure>
-          <p class="fig-note has-text-centered">
-            Signed error <em>d&#770; &minus; d</em> (left) and gradient-direction error (right)
-            against true distance, over 3.8 M near-field samples. The error is one-sided:
-            the network under-reports, never over-reports.
+          <p class="refs">
+            [8] R. Han et al.,
+            <a href="https://doi.org/10.1109/TRO.2025.3554252" target="_blank"
+              >&ldquo;NeuPAN: Direct point robot navigation with end-to-end
+              model-based learning,&rdquo;</a
+            >
+            <em>IEEE Transactions on Robotics</em>, 41:2804&ndash;2824, 2025.
           </p>
         </div>
-      </div>
+      </section>
 
-      <div class="columns is-centered">
-        <div class="column is-four-fifths">
-          <div class="content">
-            <table class="table is-fullwidth is-striped tight">
-              <thead>
-                <tr><th>True distance</th><th>Samples</th><th>MAE</th><th>p95</th><th>Optimistic</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>0 &ndash; 0.05 m</td><td>28 k</td><td>10.2 mm</td><td>32.8 mm</td><td><strong>0.00%</strong></td></tr>
-                <tr><td>0.05 &ndash; 0.1 m</td><td>31 k</td><td>10.1 mm</td><td>27.4 mm</td><td><strong>0.00%</strong></td></tr>
-                <tr><td>0.1 &ndash; 0.2 m</td><td>73 k</td><td>7.0 mm</td><td>13.9 mm</td><td><strong>0.00%</strong></td></tr>
-                <tr><td>0.2 &ndash; 0.5 m</td><td>302 k</td><td>3.9 mm</td><td>7.3 mm</td><td><strong>0.00%</strong></td></tr>
-                <tr><td>0.5 &ndash; 1 m</td><td>780 k</td><td>2.7 mm</td><td>6.4 mm</td><td><strong>0.00%</strong></td></tr>
-                <tr><td>1 &ndash; 2 m</td><td>2.6 M</td><td>1.3 mm</td><td>5.3 mm</td><td><strong>0.00%</strong></td></tr>
-              </tbody>
-            </table>
-            <p class="fig-note">
-              A one-sided error is what makes the barrier trustworthy: an under-reported
-              distance shrinks the safe set, it never inflates it. The residual bias is
-              absorbed by the <code>d_safe = 0.10 m</code> margin, which is two orders of
-              magnitude larger than the worst-band MAE.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== ODOMETRY FAULT ===================== -->
-  <section class="section" id="odometry">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">2. Robustness to odometry failures</h2>
-      <div class="content has-text-justified">
-        <p>
-          We inject a drift fault into the odometry the nominal planner consumes. The
-          estimate diverges from ground truth and the planner's commands go with it &mdash;
-          but the barrier is computed from the live cloud in the body frame, so it keeps
-          vetoing the commands that would actually hit something. This is the practical
-          consequence of keeping the pose estimate out of the safety loop, and it is not
-          available to any filter whose obstacle set lives in a world frame.
-        </p>
-      </div>
-
-      <div class="video-grid cols-2">
-        <div>
-          <video poster="static/images/odom_nofilter_poster.jpg" controls muted loop playsinline preload="none">
-            <source src="static/videos/odom_nofilter.mp4" type="video/mp4">
-          </video>
-          <p class="video-cap"><b class="is-base">Without safety filter</b>the drifted command is executed as issued</p>
-        </div>
-        <div>
-          <video poster="static/images/odom_ours_poster.jpg" controls muted loop playsinline preload="none">
-            <source src="static/videos/odom_ours.mp4" type="video/mp4">
-          </video>
-          <p class="video-cap"><b class="is-ours">PRISM-CBF (ours)</b>same fault, same planner &mdash; clearance held</p>
-        </div>
-      </div>
-
-      <div class="columns is-centered" style="margin-top: 2rem;">
-        <div class="column is-four-fifths">
-          <figure>
-            <img src="static/images/odom_xy_t04.png"
-                 alt="Raw versus fault-injected odometry trajectory in the plane"
-                 style="width:100%; border-radius:8px;" loading="lazy">
-          </figure>
-          <p class="fig-note has-text-centered">
-            The injected fault in the plane: the planner's belief (red) leaves the true
-            path (black) at t &asymp; 26 s and never comes back.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== MOTION CONSTRAINTS ===================== -->
-  <section class="section hero is-light" id="motion">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">3. Adaptation to different motion constraints</h2>
-      <div class="columns is-centered">
-        <div class="column is-half">
+      <!-- ===================== NARROW GAP ===================== -->
+      <section class="section" id="narrow-gap">
+        <div class="container is-max-desktop">
+          <h2 class="title is-3">1. Narrow-gap traversability</h2>
           <div class="content has-text-justified">
             <p>
-              The barrier rows are assembled from the footprint and the cloud; the
-              actuation model enters only as the box the QP optimizes inside. Restricting
-              that box turns the same filter into a different robot without retraining
-              anything:
-            </p>
-            <table class="table is-fullwidth is-striped tight">
-              <thead><tr><th>Model</th><th>Free inputs</th></tr></thead>
-              <tbody>
-                <tr><td>Hybrid</td><td>v<sub>x</sub>, v<sub>y</sub>, &omega;</td></tr>
-                <tr><td>Omnidirectional</td><td>v<sub>x</sub>, v<sub>y</sub> &nbsp;(&omega; = 0)</td></tr>
-                <tr><td>Unicycle</td><td>v<sub>x</sub>, &omega; &nbsp;(v<sub>y</sub> = 0)</td></tr>
-              </tbody>
-            </table>
-            <p>
-              The nominal command in the run shown is deliberately unsafe:
-              v = 0.5 m/s with &omega; = 0.8&thinsp;sin(1.25&thinsp;t) rad/s, driven straight
-              into the obstacles. Each model finds a different way out of the same scene,
-              and each keeps its clearance.
+              A disc-inflated footprint is safe, but it is safe about a robot
+              that does not exist. The Go2W's trapezoid is 0.70 m long and 0.43
+              m wide at the front; its circumscribing circle is 0.82 m across.
+              Every gap between those two numbers is one the robot could
+              physically pass and the filter refuses.
             </p>
           </div>
-        </div>
-        <div class="column is-half">
-          <video poster="static/images/motion_constraints_poster.jpg" controls muted loop playsinline preload="none">
-            <source src="static/videos/motion_constraints.mp4" type="video/mp4">
-          </video>
-          <p class="video-cap">Hybrid, omnidirectional and unicycle, under the same unsafe command</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ===================== NOMINAL POLICIES ===================== -->
-  <section class="section" id="policies">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">4. Integration with nominal navigation policies</h2>
-      <div class="columns is-centered">
-        <div class="column is-half">
-          <video poster="static/images/nominal_policies_poster.jpg" controls muted loop playsinline preload="none">
-            <source src="static/videos/nominal_policies.mp4" type="video/mp4">
-          </video>
-          <p class="video-cap">Dense obstacle course, played at 2&times;</p>
-        </div>
-        <div class="column is-half">
-          <div class="content has-text-justified">
-            <p>
-              PRISM Shield is a filter, not a planner: it takes whatever
-              <code>/cmd_vel</code> arrives and returns the nearest safe command. That
-              makes the nominal policy a free choice. We drop it under two very different
-              ones without changing a parameter &mdash; <strong>Falco</strong>&nbsp;[6], a
-              sampling-based local planner, and <strong>NavRL</strong>&nbsp;[7], a learned
-              policy.
-            </p>
-            <p>
-              Neither was trained or tuned against the filter, and neither needs to know
-              it is there: the filter engages only on the ticks where the nominal command
-              would eat into the margin, and passes it through untouched otherwise.
-            </p>
-          </div>
-        </div>
-      </div>
-      <p class="refs">
-        [6] J. Zhang et al., &ldquo;Falco: Fast likelihood-based collision avoidance with
-        extension to human-guided navigation,&rdquo; <em>Journal of Field Robotics</em>,
-        37(8):1300&ndash;1313, 2020.<br>
-        [7] Z. Xu et al., &ldquo;NavRL: Learning safe flight in dynamic environments,&rdquo;
-        <em>IEEE Robotics and Automation Letters</em>, 2025.
-      </p>
-    </div>
-  </section>
-
-  <!-- ===================== NONCONVEX BAR ===================== -->
-  <section class="section hero is-light" id="nonconvex">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">5. Non-convex footprint with an attached bar</h2>
-      <div class="content has-text-justified">
-        <p>
-          A bar bolted across the robot's back makes the footprint non-convex, and its
-          convex hull would claim the two empty wedges beside the body. Modelled instead
-          as a <strong>union</strong> of two convex parts, each part contributes its own
-          rows to the same QP. The yaw term of every row uses the <em>body-frame</em>
-          point, so an obstacle beside the bar's tip is far from the body origin and
-          constrains &omega; hard even while the body itself is clear &mdash; that falls
-          out of the kinematics, it is not a hand-added rotation penalty.
-        </p>
-      </div>
-
-      <div class="video-grid cols-2">
-        <div>
-          <video poster="static/images/bar_doorway_poster.jpg" controls muted loop playsinline preload="none">
-            <source src="static/videos/bar_doorway.mp4" type="video/mp4">
-          </video>
-          <p class="video-cap"><b>Doorway</b>the bar clears the frame the body would have ignored</p>
-        </div>
-        <div>
-          <video poster="static/images/bar_outdoor_poster.jpg" controls muted loop playsinline preload="none">
-            <source src="static/videos/bar_outdoor.mp4" type="video/mp4">
-          </video>
-          <p class="video-cap"><b>Obstacle field</b>both parts constrain the same QP throughout</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== RESULTS CAROUSEL ===================== -->
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container">
-        <h2 class="title is-3 has-text-centered">Results</h2>
-        <div id="results-carousel" class="carousel results-carousel">
-
-          <div class="item">
-            <img src="static/images/success_vs_gap.png" alt="Success rate versus gap width" loading="lazy"/>
-            <h2 class="subtitle has-text-centered">
-              Narrow-gap traversal: 100% success at 0.70 m, where the circle baseline needs 1.10 m.
-            </h2>
+          <div class="video-grid cols-3">
+            <div>
+              <video
+                poster="static/images/narrow_ours_poster.jpg"
+                controls
+                muted
+                loop
+                playsinline
+                preload="none"
+              >
+                <source src="static/videos/narrow_ours.mp4" type="video/mp4" />
+              </video>
+              <p class="video-cap">
+                <b class="is-ours">PRISM-CBF (ours)</b>60 cm gap &mdash; passes
+                through
+              </p>
+            </div>
+            <div>
+              <video
+                poster="static/images/narrow_ellipse_poster.jpg"
+                controls
+                muted
+                loop
+                playsinline
+                preload="none"
+              >
+                <source
+                  src="static/videos/narrow_ellipse.mp4"
+                  type="video/mp4"
+                />
+              </video>
+              <p class="video-cap">
+                <b class="is-base">Composite CBF (ellipse)</b>90 cm gap &mdash;
+                stalls at the entrance
+              </p>
+            </div>
+            <div>
+              <video
+                poster="static/images/narrow_circle_poster.jpg"
+                controls
+                muted
+                loop
+                playsinline
+                preload="none"
+              >
+                <source
+                  src="static/videos/narrow_circle.mp4"
+                  type="video/mp4"
+                />
+              </video>
+              <p class="video-cap">
+                <b class="is-base">Composite CBF (circle)</b>100 cm gap &mdash;
+                stalls at the entrance
+              </p>
+            </div>
           </div>
 
-          <div class="item">
-            <img src="static/images/success_vs_don.png" alt="Success rate versus degree of narrowness" loading="lazy"/>
-            <h2 class="subtitle has-text-centered">
-              The same result against the dimensionless degree of narrowness (DoN).
-            </h2>
+          <div class="columns is-centered" style="margin-top: 2rem">
+            <div class="column is-half">
+              <div class="content has-text-justified">
+                <p>
+                  The three runs above are single trials, chosen at each
+                  method's own limit: PRISM Shield goes through a gap
+                  <strong>1.5&times; narrower</strong> than the one that stops
+                  the ellipse baseline and <strong>1.7&times; narrower</strong>
+                  than the one that stops the circle.
+                </p>
+                <p>
+                  Over 10 trials per width the picture is the same. PRISM Shield
+                  reaches a 100% success rate at <strong>0.70 m</strong>; the
+                  composite CBF needs <strong>1.00 m</strong> with an ellipse
+                  and <strong>1.10 m</strong> with a circle. The 60 cm run shown
+                  here sits below that threshold &mdash; at 60 cm our own
+                  success rate is 50%, and the baselines are at zero.
+                </p>
+              </div>
+            </div>
+            <div class="column is-half">
+              <figure>
+                <img
+                  src="static/images/success_vs_gap.png"
+                  alt="Success rate versus gap width for PRISM-CBF, composite-CBF with a circle, and composite-CBF with an ellipse"
+                  style="width: 100%; border-radius: 8px"
+                  loading="lazy"
+                />
+              </figure>
+            </div>
           </div>
 
-          <div class="item">
-            <img src="static/images/prism_accuracy_signed_compare.png" alt="Signed distance error across footprint models" loading="lazy"/>
-            <h2 class="subtitle has-text-centered">
-              Signed distance error compared across footprint models — one-sided everywhere.
-            </h2>
-          </div>
-
-          <div class="item">
-            <img src="static/images/benchmark_inference_gpu.png" alt="Pipeline latency versus number of polygons and points" loading="lazy"/>
-            <h2 class="subtitle has-text-centered">
-              Pipeline latency: PRISM inference dominates, the QP itself costs under a millisecond.
-            </h2>
-          </div>
-
-          <div class="item">
-            <img src="static/images/sampled_data_polygon.png" alt="Conventional sampled CBF versus control-margin CBF" loading="lazy"/>
-            <h2 class="subtitle has-text-centered">
-              Control-margin CBF removes the inter-sample chattering a conventional sampled CBF shows against a wall.
-            </h2>
-          </div>
-
-          <div class="item">
-            <img src="static/images/trial_overview_prism.png" alt="Per-trial overview of commands, barrier value and clearance" loading="lazy"/>
-            <h2 class="subtitle has-text-centered">
-              Per-trial overview: nominal versus filtered commands, barrier value h(x), and minimum clearance.
-            </h2>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== INSIDE ONE TRIAL ===================== -->
-  <section class="section" id="inside">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">Inside one trial</h2>
-      <div class="columns is-centered">
-        <div class="column is-four-fifths">
-          <video poster="static/images/overview_poster.jpg" controls muted loop playsinline
-                 preload="none" style="width:100%; border-radius:8px;">
-            <source src="static/videos/overview.mp4" type="video/mp4">
-          </video>
-          <p class="fig-note has-text-centered">
-            The same hardware trial as a trace. Top three panels: the nominal command
-            (dashed) against the command PRISM Shield actually issues (blue), with the
-            shaded spans marking the ticks where the filter intervened. Bottom: the
-            minimum distance from the exact trapezoid footprint to the live cloud, held
-            above the 0.10 m margin throughout.
+          <p class="refs">
+            [3] M. Harms, M. Jacquet, and K. Alexis,
+            <a href="https://arxiv.org/abs/2502.04101" target="_blank"
+              >&ldquo;Safe quadrotor navigation using composite control barrier
+              functions,&rdquo;</a
+            >
+            <em>ICRA</em>, 2025.<br />
+            [5] V. N. Sankaranarayanan et al.,
+            <a href="https://arxiv.org/abs/2605.15782" target="_blank"
+              >&ldquo;Reactive robot-centric safety for autonomous navigation in
+              constrained and dynamic environments,&rdquo;</a
+            >
+            <em>arXiv:2605.15782</em>, 2026.
           </p>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <!-- ===================== REAL TIME ===================== -->
-  <section class="section hero is-light">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">Real-time on board</h2>
-      <div class="columns is-centered">
-        <div class="column is-full">
-          <figure>
-            <img src="static/images/benchmark_inference_gpu.png"
-                 alt="Latency of the PRISM pipeline against polygon count and point count"
-                 style="width:100%; border-radius:8px;" loading="lazy">
-          </figure>
-          <p class="fig-note has-text-centered">
-            (a) end-to-end latency against the number of convex parts, (b) the 50 ms
-            (20 Hz) contour over the points &times; polygons grid, (c) the split between
-            PRISM inference, constraint assembly and the QP solve at 20 k points.
-          </p>
-        </div>
-      </div>
-
-      <div class="columns is-centered">
-        <div class="column is-four-fifths">
-          <div class="content">
-            <p>
-              The learned distance replaces a per-point second-order cone program. Against the
-              same problem solved exactly with ECOS:
-            </p>
-            <table class="table is-fullwidth is-striped tight">
-              <thead>
-                <tr><th>Points</th><th>Parts</th><th>PRISM</th><th>ECOS (raw)</th><th>Speed-up</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>100</td><td>1</td><td>1.7 ms</td><td>8.3 ms</td><td>5.0&times;</td></tr>
-                <tr><td>500</td><td>1</td><td>3.1 ms</td><td>40.3 ms</td><td>13.0&times;</td></tr>
-                <tr><td>1 000</td><td>1</td><td>5.2 ms</td><td>80.4 ms</td><td>15.4&times;</td></tr>
-                <tr><td>2 000</td><td>1</td><td>9.5 ms</td><td>160.6 ms</td><td>16.9&times;</td></tr>
-                <tr><td>5 000</td><td>1</td><td>22.6 ms</td><td>399.5 ms</td><td>17.7&times;</td></tr>
-                <tr><td>10 000</td><td>2</td><td>88.2 ms</td><td>1 611 ms</td><td>18.3&times;</td></tr>
-              </tbody>
-            </table>
-            <p class="fig-note">
-              Against the same program expressed through CVXPY the gap is roughly 600&ndash;700&times;.
-              The deployed filter runs a 15 Hz control loop on an NVIDIA Jetson Orin NX
-              (ROS 2 Foxy, CUDA), with the QP solve itself under 0.3 ms.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SAMPLED DATA ===================== -->
-  <section class="section hero is-light">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">Closing the inter-sample gap</h2>
-      <div class="columns is-centered">
-        <div class="column is-full">
-          <figure>
-            <img src="static/images/sampled_data_polygon.png"
-                 alt="Conventional sampled CBF versus control-margin CBF along a wall"
-                 style="width:100%; border-radius:8px;" loading="lazy">
-          </figure>
-        </div>
-      </div>
-      <div class="columns is-centered">
-        <div class="column is-four-fifths">
+      <!-- ===================== ODOMETRY FAULT ===================== -->
+      <section class="section hero is-light" id="odometry">
+        <div class="container is-max-desktop">
+          <h2 class="title is-3">2. Robustness to odometry failures</h2>
           <div class="content has-text-justified">
             <p>
-              A CBF-QP solved at discrete instants only constrains the barrier <em>at those
-              instants</em>. Between two ticks the robot moves under zero-order hold, and the
-              barrier can dip below zero and come back before the next solve ever sees it. On a
-              footprint hugging a wall this is visible as chattering across h = 0.
-            </p>
-            <p>
-              The control-margin formulation charges each constraint a margin equal to how far
-              the barrier can move within one hold interval. Bounding that motion by the
-              <em>barrier-relevant</em> rate rather than the full speed matters: the obvious
-              &#8214;v&#8214; bound pays for tangential motion that cannot change the barrier at
-              all, and forces a deterministic two-cycle.
-            </p>
-            <p>
-              Measured over a 4 s wall-following run, with safety checked continuously at 2 ms
-              resolution through every hold interval:
-            </p>
-            <table class="table is-fullwidth is-striped tight">
-              <thead>
-                <tr><th></th><th>min. continuous margin</th><th>boundary crossed</th><th>control TV</th><th>sign changes</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>conventional</td><td><strong>&minus;7.6 mm</strong></td><td>yes, at t = 0.99 s</td><td>4.79 m/s</td><td>21</td></tr>
-                <tr><td>control-margin</td><td><strong>+0.8 mm</strong></td><td>no</td><td>1.81 m/s</td><td>0</td></tr>
-              </tbody>
-            </table>
-            <p class="fig-note">
-              All 20 random seeds stayed continuously safe.
-              <strong>Status:</strong> this is validated in simulation; the deployed filter
-              currently enforces the conventional condition.
+              We inject a drift fault into the odometry the nominal planner
+              consumes. The estimate diverges from ground truth and the
+              planner's commands go with it &mdash; but the barrier is computed
+              from the live cloud in the body frame, so it keeps vetoing the
+              commands that would actually hit something. This is the practical
+              consequence of keeping the pose estimate out of the safety loop,
+              and it is not available to any filter whose obstacle set lives in
+              a world frame.
             </p>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ===================== BIBTEX ===================== -->
-  <section class="section" id="BibTeX">
-    <div class="container is-max-desktop content">
-      <div class="bibtex-header">
-        <h2 class="title">BibTeX</h2>
-        <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
-          <i class="fas fa-copy"></i>
-          <span class="copy-text">Copy</span>
-        </button>
-      </div>
-      <!-- TODO: update once the preprint is on arXiv -->
-      <pre id="bibtex-code"><code>@article{zhou2026prismshield,
+          <div class="video-grid cols-2">
+            <div>
+              <video
+                poster="static/images/odom_nofilter_poster.jpg"
+                controls
+                muted
+                loop
+                playsinline
+                preload="none"
+              >
+                <source
+                  src="static/videos/odom_nofilter.mp4"
+                  type="video/mp4"
+                />
+              </video>
+              <p class="video-cap">
+                <b class="is-base">Without safety filter</b>the drifted command
+                is executed as issued
+              </p>
+            </div>
+            <div>
+              <video
+                poster="static/images/odom_ours_poster.jpg"
+                controls
+                muted
+                loop
+                playsinline
+                preload="none"
+              >
+                <source src="static/videos/odom_ours.mp4" type="video/mp4" />
+              </video>
+              <p class="video-cap">
+                <b class="is-ours">PRISM-CBF (ours)</b>same fault, same planner
+                &mdash; clearance held
+              </p>
+            </div>
+          </div>
+
+          <div class="columns is-centered" style="margin-top: 2rem">
+            <div class="column is-four-fifths">
+              <figure style="max-width: 560px; margin: 0 auto">
+                <img
+                  src="static/images/trial_overview_odom_fault.png"
+                  alt="Nominal and filtered v_x, v_y and omega commands and the minimum obstacle distance over an 18 s trial, with an odometry fault from about 6.5 s to 11.7 s; the minimum distance stays above d_safe throughout"
+                  style="width: 100%"
+                  loading="lazy"
+                />
+              </figure>
+              <p class="fig-note has-text-centered">
+                Nominal (grey) and filtered (blue) commands during the trial.
+                While the odometry fault is active, the filter keeps overriding
+                the corrupted commands, and the minimum distance to obstacles
+                stays above <em>d</em><sub>safe</sub> throughout.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== MOTION CONSTRAINTS ===================== -->
+      <section class="section" id="motion">
+        <div class="container is-max-desktop">
+          <h2 class="title is-3">
+            3. Adaptation to different motion constraints
+          </h2>
+          <div class="content has-text-justified">
+            <p>
+              The barrier rows are assembled from the footprint and the cloud;
+              the actuation model enters only as the box the QP optimizes
+              inside. Restricting that box turns the same filter into a
+              different robot without retraining anything.
+            </p>
+          </div>
+
+          <div class="model-grid">
+            <div class="model-card">
+              <div class="model-name">Hybrid</div>
+              <div class="model-inputs">
+                v<sub>x</sub>, v<sub>y</sub>, &omega;
+              </div>
+              <div class="model-lock">all inputs free</div>
+            </div>
+            <div class="model-card">
+              <div class="model-name">Fixed-heading</div>
+              <div class="model-inputs">v<sub>x</sub>, v<sub>y</sub></div>
+              <div class="model-lock">&omega; = 0</div>
+            </div>
+            <div class="model-card">
+              <div class="model-name">Unicycle</div>
+              <div class="model-inputs">v<sub>x</sub>, &omega;</div>
+              <div class="model-lock">v<sub>y</sub> = 0</div>
+            </div>
+          </div>
+
+          <div class="columns is-vcentered" style="margin-top: 2rem">
+            <div class="column is-7">
+              <video
+                poster="static/images/motion_constraints_poster.jpg"
+                controls
+                muted
+                loop
+                playsinline
+                preload="none"
+                style="width: 100%; border-radius: 8px; display: block"
+              >
+                <source
+                  src="static/videos/motion_constraints.mp4"
+                  type="video/mp4"
+                />
+              </video>
+              <p class="video-cap">
+                Hybrid, fixed-heading and unicycle, under the same unsafe
+                command
+              </p>
+            </div>
+            <div class="column is-5">
+              <div class="content has-text-justified">
+                <p>
+                  The nominal command in the run shown is deliberately unsafe:
+                  v = 0.5 m/s with &omega; = 0.8&thinsp;sin(1.25&thinsp;t)
+                  rad/s, driven straight into the obstacles.
+                </p>
+                <p>
+                  Each model finds a different way out of the same scene: the
+                  hybrid robot mixes all three inputs, the fixed-heading robot
+                  slides sideways, and the unicycle slows down and turns. Each
+                  keeps its clearance.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <figure style="max-width: 760px; margin: 2rem auto 0">
+            <img
+              src="static/images/Adaption%20to%20different%20robot.png"
+              alt="Hybrid, fixed-heading and unicycle motion models of the Go2W, with nominal and filtered v_x, v_y and omega commands and the minimum distance for each model"
+              style="width: 100%"
+              loading="lazy"
+            />
+          </figure>
+          <p class="fig-note has-text-centered">
+            Top: the free inputs of each motion model. Bottom: nominal (grey
+            dashed) and filtered commands for each model under the same unsafe
+            command. The locked input stays at zero, and the minimum distance
+            <em>d</em><sub>min</sub> never drops below
+            <em>d</em><sub>safe</sub>.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== NOMINAL POLICIES ===================== -->
+      <section class="section hero is-light" id="policies">
+        <div class="container is-max-desktop">
+          <h2 class="title is-3">
+            4. Integration with nominal navigation policies
+          </h2>
+          <div class="columns is-centered">
+            <div class="column is-half">
+              <video
+                poster="static/images/nominal_policies_poster.jpg"
+                controls
+                muted
+                loop
+                playsinline
+                preload="none"
+                style="width: 100%; border-radius: 8px; display: block"
+              >
+                <source
+                  src="static/videos/nominal_policies.mp4"
+                  type="video/mp4"
+                />
+              </video>
+              <p class="video-cap">Dense obstacle course, played at 2&times;</p>
+            </div>
+            <div class="column is-half">
+              <div class="content has-text-justified">
+                <p>
+                  PRISM Shield is a filter, not a planner: it takes whatever
+                  <code>/cmd_vel</code> arrives and returns the nearest safe
+                  command. That makes the nominal policy a free choice. We drop
+                  it under two very different ones without changing a parameter
+                  &mdash; <strong>Falco</strong>&nbsp;<a
+                    href="https://doi.org/10.1002/rob.21952"
+                    target="_blank"
+                    >[6]</a
+                  >, a sampling-based
+                  local planner, and <strong>NavRL</strong>&nbsp;<a
+                    href="https://ieeexplore.ieee.org/document/10904341"
+                    target="_blank"
+                    >[7]</a
+                  >, a learned
+                  policy.
+                </p>
+                <p>
+                  Neither was trained or tuned against the filter, and neither
+                  needs to know it is there: the filter engages only on the
+                  ticks where the nominal command would eat into the margin, and
+                  passes it through untouched otherwise.
+                </p>
+              </div>
+            </div>
+          </div>
+          <figure style="max-width: 640px; margin: 2rem auto 0">
+            <img
+              src="static/images/Nav.png"
+              alt="Success rate and navigation time for Falco and NavRL with and without PRISM Shield in low-complexity (90 cm minimum gap) and high-complexity (70 cm minimum gap) courses, with overhead trajectory composites of each course"
+              style="width: 100%"
+              loading="lazy"
+            />
+          </figure>
+          <p class="fig-note has-text-centered">
+            Success rate (bars) and navigation time (dots, mean &plusmn; SD) with
+            and without PRISM Shield. In the low-complexity course (minimum gap
+            90 cm) both planners reach 100% with the filter, up from 70% and
+            60%. In the high-complexity course (minimum gap 70 cm), Falco rises
+            from 40% to 100% and NavRL from 30% to 70%. Bottom: overhead
+            composites of the robot's path through each course.
+          </p>
+          <p class="refs">
+            [6] J. Zhang et al.,
+            <a href="https://doi.org/10.1002/rob.21952" target="_blank"
+              >&ldquo;Falco: Fast likelihood-based collision avoidance with
+              extension to human-guided navigation,&rdquo;</a
+            >
+            <em>Journal of Field Robotics</em>, 37(8):1300&ndash;1313, 2020.<br />
+            [7] Z. Xu et al.,
+            <a href="https://ieeexplore.ieee.org/document/10904341" target="_blank"
+              >&ldquo;NavRL: Learning safe flight in dynamic environments,&rdquo;</a
+            >
+            <em>IEEE Robotics and Automation Letters</em>, 2025.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== NONCONVEX BAR ===================== -->
+      <section class="section" id="nonconvex">
+        <div class="container is-max-desktop">
+          <h2 class="title is-3">
+            5. Non-convex footprint with an attached bar
+          </h2>
+          <div class="content has-text-justified">
+            <p>
+              A bar bolted across the robot's back makes the footprint
+              non-convex, and its convex hull would claim the two empty wedges
+              beside the body. Modelled instead as a <strong>union</strong> of
+              two convex parts, each part contributes its own rows to the same
+              QP. The yaw term of every row uses the <em>body-frame</em>
+              point, so an obstacle beside the bar's tip is far from the body
+              origin and constrains &omega; hard even while the body itself is
+              clear &mdash; that falls out of the kinematics, it is not a
+              hand-added rotation penalty.
+            </p>
+          </div>
+
+          <div class="video-grid" style="gap: 2rem">
+            <div>
+              <video
+                poster="static/images/bar_doorway_poster.jpg"
+                controls
+                muted
+                loop
+                playsinline
+                preload="none"
+              >
+                <source src="static/videos/bar_doorway.mp4" type="video/mp4" />
+              </video>
+              <p class="video-cap">
+                <b>Doorway</b>the bar clears the frame the body would have
+                ignored
+              </p>
+            </div>
+            <div>
+              <video
+                poster="static/images/bar_outdoor_poster.jpg"
+                controls
+                muted
+                loop
+                playsinline
+                preload="none"
+              >
+                <source src="static/videos/bar_outdoor.mp4" type="video/mp4" />
+              </video>
+              <p class="video-cap">
+                <b>Obstacle field</b>both parts constrain the same QP throughout
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== BIBTEX ===================== -->
+      <section class="section hero is-light" id="BibTeX">
+        <div class="container is-max-desktop content">
+          <div class="bibtex-header">
+            <h2 class="title">BibTeX</h2>
+            <button
+              class="copy-bibtex-btn"
+              onclick="copyBibTeX()"
+              title="Copy BibTeX to clipboard"
+            >
+              <i class="fas fa-copy"></i>
+              <span class="copy-text">Copy</span>
+            </button>
+          </div>
+          <!-- TODO: update once the preprint is on arXiv -->
+          <pre id="bibtex-code"><code>@article{zhou2026prismshield,
   title   = {PRISM Shield: Certified Body-Frame Point-Cloud Safety Filtering
              for Polygonal Robot Footprints},
   author  = {Zhou, Wenjie},
@@ -826,42 +1223,40 @@
   year    = {2026},
   url     = {https://zhouwenjie1124.github.io/Prism-Shield-Website/}
 }</code></pre>
-    </div>
-  </section>
+        </div>
+      </section>
+    </main>
 
-  <!-- ===================== ACKNOWLEDGEMENT ===================== -->
-  <section class="section">
-    <div class="container is-max-desktop content">
-      <h2 class="title is-4">Acknowledgements</h2>
-      <p>
-        The PRISM training and inference math is adapted from the
-        <a href="https://github.com/hanruihua/NeuPAN" target="_blank">NeuPAN</a>
-        implementation by Ruihua Han (2025, GPLv3).
-      </p>
-    </div>
-  </section>
-
-  </main>
-
-  <footer class="footer">
-    <div class="container">
-      <div class="columns is-centered">
-        <div class="column is-8">
-          <div class="content">
-            <p>
-              This page was built using the
-              <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>
-              which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
-              You are free to borrow the source code of this website, we just ask that you link back to this page in the footer.
-              <br> This website is licensed under a
-              <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
-              Commons Attribution-ShareAlike 4.0 International License</a>.
-            </p>
+    <footer class="footer">
+      <div class="container">
+        <div class="columns is-centered">
+          <div class="column is-8">
+            <div class="content">
+              <p>
+                This page was built using the
+                <a
+                  href="https://github.com/eliahuhorwitz/Academic-project-page-template"
+                  target="_blank"
+                  >Academic Project Page Template</a
+                >
+                which was adopted from the
+                <a href="https://nerfies.github.io" target="_blank">Nerfies</a>
+                project page. You are free to borrow the source code of this
+                website, we just ask that you link back to this page in the
+                footer. <br />
+                This website is licensed under a
+                <a
+                  rel="license"
+                  href="http://creativecommons.org/licenses/by-sa/4.0/"
+                  target="_blank"
+                  >Creative Commons Attribution-ShareAlike 4.0 International
+                  License</a
+                >.
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </footer>
-
-</body>
+    </footer>
+  </body>
 </html>

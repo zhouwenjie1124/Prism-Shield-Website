@@ -2,3 +2,5 @@
 *.pptx
 # 320 MB source; the page uses the transcoded prism_shield_video.mp4
 static/videos/*.mov
+# 186 MB 母版；页面用转码后的 prism_shield_video.mp4
+static/videos/Prism_Shield.mp4
